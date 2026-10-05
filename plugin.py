@@ -11,20 +11,28 @@ from . import engine
 from .dialogs import HubDialog
 
 MENU = "&Attribute Rules Manager"
+TOOLBAR = "Attribute Rules Manager"
 
 
 class AttributeRulesPlugin:
     def __init__(self, iface):
         self.iface = iface
         self.action = None
+        self.toolbar = None
         engine.HOOK.watcher.iface = iface
 
     def initGui(self):
         icon = QIcon(os.path.join(os.path.dirname(__file__), "icon.png"))
         self.action = QAction(icon, "Attribute Rules Manager...", self.iface.mainWindow())
+        self.action.setToolTip("Attribute Rules Manager: calculation, constraint and validation rules")
         self.action.triggered.connect(lambda _checked=False: self.run())
         self.iface.addPluginToMenu(MENU, self.action)
-        self.iface.addToolBarIcon(self.action)
+        # its own toolbar, visible by default (the shared Plugins toolbar is often hidden)
+        self.toolbar = self.iface.addToolBar(TOOLBAR)
+        self.toolbar.setObjectName("AttributeRulesManagerToolbar")
+        self.toolbar.setToolTip(TOOLBAR)
+        self.toolbar.addAction(self.action)
+        self.toolbar.setVisible(True)
         engine.HOOK.connect()
         engine.HOOK.apply_project()
 
@@ -32,8 +40,11 @@ class AttributeRulesPlugin:
         engine.HOOK.disconnect()
         if self.action is not None:
             self.iface.removePluginMenu(MENU, self.action)
-            self.iface.removeToolBarIcon(self.action)
-            self.action = None
+        if self.toolbar is not None:
+            self.iface.mainWindow().removeToolBar(self.toolbar)
+            self.toolbar.deleteLater()
+            self.toolbar = None
+        self.action = None
 
     def run(self):
         HubDialog(self.iface, self.iface.mainWindow()).exec()

@@ -1,3 +1,6 @@
+0.4.1
+- The plugin has its own toolbar (Attribute Rules Manager) with its button, visible by default.
+
 0.4.0
 - 155 ready-made rules: 61 calculation, 45 constraint, 49 validation.
 - The template list is grouped by topic (areas, coordinates, dates, text, numbers, geometry, other layers...).

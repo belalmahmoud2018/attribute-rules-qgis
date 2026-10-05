@@ -1,7 +1,7 @@
-Attribute Rules Manager (v0.4.0)
+Attribute Rules Manager (v0.4.1)
 
 Install: QGIS > Plugins > Manage and Install Plugins > Install from ZIP, then restart QGIS.
-Open:    Plugins > Attribute Rules Manager (or the toolbar icon).
+Open:    Plugins > Attribute Rules Manager, or the button on its own toolbar.
 
 1. Choose the storage format (GeoPackage, SpatiaLite, File Geodatabase) and open the file.
 2. Rules...  pick a layer and add rules:
