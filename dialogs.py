@@ -172,7 +172,7 @@ class RuleEditDialog(QDialog):
 
     def _auto_name(self, rule_type):
         if self.template.currentData():
-            return self.template.currentText()
+            return self.template.currentText().strip()
         if rule_type == "calculation" and self.field.currentData():
             return "Calculate %s" % self.field.currentData()
         return "%s rule" % logic.TYPE_LABELS[rule_type]
@@ -197,8 +197,14 @@ class RuleEditDialog(QDialog):
         self.template.blockSignals(True)
         self.template.clear()
         self.template.addItem("(choose a ready-made rule)", None)
-        for label, _tt, expr, needs, hint in logic.templates_for(t):
-            self.template.addItem(label, (expr, needs, hint))
+        for title, items in logic.grouped_templates(t):
+            self.template.addItem("---- %s ----" % title, None)
+            model = self.template.model()
+            header = model.item(self.template.count() - 1) if hasattr(model, "item") else None
+            if header is not None:
+                header.setEnabled(False)
+            for label, _tt, expr, needs, hint in items:
+                self.template.addItem("    " + label, (expr, needs, hint))
         self.template.blockSignals(False)
         self._template_changed()
         is_calc, is_cons = t == "calculation", t == "constraint"
@@ -239,7 +245,7 @@ class RuleEditDialog(QDialog):
         self.expression.setExpression(logic.fill_template(
             expr, field, self.other.currentText() if needs else None))
         if not self.name.text().strip():
-            self.name.setText(self.template.currentText())
+            self.name.setText(self.template.currentText().strip())
         self.tpl_hint.setText(("Note: " + hint) if hint else "")
         self.tpl_hint.setVisible(bool(hint))
 

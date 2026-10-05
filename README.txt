@@ -1,4 +1,4 @@
-Attribute Rules Manager (v0.2.0)
+Attribute Rules Manager (v0.4.0)
 
 Install: QGIS > Plugins > Manage and Install Plugins > Install from ZIP, then restart QGIS.
 Open:    Plugins > Attribute Rules Manager (or the toolbar icon).
@@ -11,7 +11,7 @@ Open:    Plugins > Attribute Rules Manager (or the toolbar icon).
      "Block it", map edits that break the rule are undone. Example: a point must not be
      drawn inside or on the edge of a polygon layer.
    - Validation: checks existing data on demand; never blocks editing.
-   Use one of the 67 templates or write any QGIS expression (expression builder available).
+   Use one of the 155 templates (grouped by topic) or write any QGIS expression (expression builder available).
    Another layer is written by its name, e.g. overlay_intersects('Landuse'); the plugin links
    it to that layer of the same file and loads it automatically.
    Constraint and validation rules do not need a field. The error message is the text shown

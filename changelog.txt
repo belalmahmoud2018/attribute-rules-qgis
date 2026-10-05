@@ -1,3 +1,23 @@
+0.4.0
+- 155 ready-made rules: 61 calculation, 45 constraint, 49 validation.
+- The template list is grouped by topic (areas, coordinates, dates, text, numbers, geometry, other layers...).
+- New calculations: square feet, acres, rounded area, planar area, perimeter in km, compactness, line start/end
+  coordinates and direction, Z, geometry type, coordinates in degrees-minutes-seconds, UTM zone, prefixed codes,
+  days remaining, Active/Expired status, year, copies and joins of fields, percentage, price per m2,
+  lookup values, counts within a distance, overlap area and percent, length of lines inside.
+- New constraints: whole numbers, minimum length, prefix, upper case, digits/Arabic/English only, spaces,
+  dates, dependent fields, unique pair, lookup existence, agreement with the layer it falls in, no overlap
+  with another layer, within a distance, snapped onto another layer, containing another layer, slivers, vertices.
+- New validations: minimum length, prefix, upper case, lookup existence, overlap with another layer, snapped.
+
+0.3.0
+- 43 validation rules (96 templates in total).
+- New validations: spaces-only text, unique pair of fields, dependent fields, text length, e-mail, phone,
+  digits only, Arabic only, English only, leading/trailing and double spaces, not negative, range,
+  whole numbers, outliers, stored area/length vs real geometry, expired dates, dates before 1900,
+  end before start, holes, short lines, slivers, too many vertices, touching / near / containing
+  another layer, and value agreeing with the layer a feature falls in.
+
 0.2.0
 - 67 ready-made rules: 29 calculation, 24 constraint, 14 validation.
 - New calculations: km2, dunam, feddan, km, coordinates as text, Google Maps link, vertices, parts,
