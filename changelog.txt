@@ -1,0 +1,28 @@
+0.2.0
+- 67 ready-made rules: 29 calculation, 24 constraint, 14 validation.
+- New calculations: km2, dunam, feddan, km, coordinates as text, Google Maps link, vertices, parts,
+  bounding box, date only, year, UUID, sum and nearest value / distance from another layer.
+- New constraints: unique value, no spaces-only text, not negative, range, list of values, text length,
+  e-mail, phone, date not in the future, end date after start date, single part, no holes, line length,
+  no overlap inside the layer, points apart, must touch another layer.
+- New validations: list of values, positive, future dates, empty / duplicate geometries, single part,
+  minimum area, overlaps, points apart, not intersecting another layer.
+- Templates that need editing show a short note after 'Use template'.
+
+0.1.2
+- Calculation rules work with any field type (decimal, integer, text); the field list shows each type.
+- Fields added in QGIS and not saved yet can be used right away.
+- Simpler editor: no field picker for constraints; the rule name is filled in automatically if left empty.
+
+0.1.1
+- Constraint rules no longer need a field, so they work on layers without attribute fields.
+- Another layer is written by its name, e.g. overlay_intersects('Landuse'), so the expression box is not shown in red.
+
+0.1.0
+- First release.
+- Calculation rules: fill a field automatically on insert (and optionally on every edit).
+- Constraint rules: refused in the form; strict rules also undo map edits that break them.
+- Validation rules: check existing data, report and select the features with problems.
+- Ready-made templates, including rules that use another layer of the same file.
+- Rules stored inside the file and applied automatically when layers load.
+- GeoPackage, SpatiaLite and File Geodatabase.

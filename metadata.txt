@@ -1,0 +1,18 @@
+[general]
+name=Attribute Rules Manager
+qgisMinimumVersion=3.22
+supportsQt6=True
+description=ArcGIS-style Attribute Rules (calculation, constraint, validation) for GeoPackage, SpatiaLite and File Geodatabase layers.
+about=Define attribute rules once and let QGIS apply them while you edit. Calculation rules fill a field automatically (area, coordinates, next ID, date, editor, values from other layers) when a feature is created or edited. Constraint rules must be true, otherwise the feature form refuses to save, and edits made on the map that break a strict rule are undone (for example: a point must not be drawn inside a polygon layer). Validation rules check existing data on demand and select the features with problems. Rules are QGIS expressions with ready-made templates, stored inside the data file so they travel with it, and applied automatically whenever the layers are loaded.
+version=0.2.0
+author=Belal Mahmoud Abdelmonem
+email=belal.ma7moud@gmail.com
+changelog=0.2.0 - 67 ready-made rules (29 calculation, 24 constraint, 14 validation) with hints, all tested in GeoPackage, SpatiaLite and File Geodatabase. 0.1.2 - Calculation works with any field type (decimal, integer, text) including fields added in QGIS and not saved yet; simpler editor: no field picker for constraints, automatic rule names. 0.1.1 - Constraint rules no longer need a field (works on layers without attributes); other layers are written by name, so the expression box is no longer red. 0.1.0 - First release: calculation, constraint and validation rules with templates, automatic apply, live edit checks with undo, validation report and selection. GeoPackage, SpatiaLite and File Geodatabase.
+tags=attribute rules,calculation,constraint,validation,geopackage,spatialite,geodatabase,editing,quality
+category=Database
+icon=icon.png
+experimental=False
+deprecated=False
+repository=https://github.com/belalmahmoud2018/attribute-rules-qgis
+tracker=https://github.com/belalmahmoud2018/attribute-rules-qgis/issues
+homepage=https://github.com/belalmahmoud2018/attribute-rules-qgis
