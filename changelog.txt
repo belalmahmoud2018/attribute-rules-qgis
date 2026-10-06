@@ -1,3 +1,9 @@
+0.5.0
+- The template list depends on the layer geometry: point layers no longer see area or line rules,
+  line layers see length/start/end/direction rules, polygon layers see area rules, and tables
+  (no geometry) see only the attribute rules. The first line of the list says how many templates fit.
+- SpatiaLite tables without geometry are now listed too, so they can get rules.
+
 0.4.1
 - The plugin has its own toolbar (Attribute Rules Manager) with its button, visible by default.
 

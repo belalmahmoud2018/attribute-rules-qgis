@@ -72,9 +72,11 @@ class ReportDialog(QDialog):
 
 # --------------------------------------------------------------- rule editor
 class RuleEditDialog(QDialog):
-    def __init__(self, fmt, path, table, fields, tables, rules, rule=None, parent=None, types=None, unsaved=None):
+    def __init__(self, fmt, path, table, fields, tables, rules, rule=None, parent=None, types=None, unsaved=None,
+                 geometry=None):
         super().__init__(parent)
         self.fmt, self.path, self.table, self.fields, self.tables = fmt, path, table, fields, tables
+        self.geometry = geometry
         self.types, self.unsaved = types or {}, unsaved or []
         self.rules, self.rule = rules, rule
         self.result_rule = None
@@ -196,8 +198,12 @@ class RuleEditDialog(QDialog):
         self._fill_fields(t, self.field.currentData())
         self.template.blockSignals(True)
         self.template.clear()
-        self.template.addItem("(choose a ready-made rule)", None)
-        for title, items in logic.grouped_templates(t):
+        kind = logic.GEOMETRY_LABELS.get(self.geometry, "")
+        groups = logic.grouped_templates(t, self.geometry)
+        count = sum(len(items) for _title, items in groups)
+        first = "(choose a ready-made rule: %d for this %s layer)" % (count, kind) if kind else "(choose a ready-made rule)"
+        self.template.addItem(first, None)
+        for title, items in groups:
             self.template.addItem("---- %s ----" % title, None)
             model = self.template.model()
             header = model.item(self.template.count() - 1) if hasattr(model, "item") else None
@@ -402,7 +408,7 @@ class RulesDialog(QDialog):
             return None
         names, types, unsaved = engine.layer_fields(self.fmt, self.path, self.info[table])
         dlg = RuleEditDialog(self.fmt, self.path, table, names, sorted(self.info), self.rules, rule, self,
-                             types=types, unsaved=unsaved)
+                             types=types, unsaved=unsaved, geometry=self.info[table].get("geometry"))
         return dlg.result_rule if dlg.exec() else None
 
     def _add(self):

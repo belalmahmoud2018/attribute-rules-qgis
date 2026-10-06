@@ -405,9 +405,61 @@ TEMPLATE_GROUPS = [
 ]
 
 
-def grouped_templates(rule_type):
-    """[(group title, [template tuples])] in display order; ungrouped templates go last."""
-    by_label = {t[0]: t for t in TEMPLATES if t[1] == rule_type}
+POINT, LINE, POLYGON = "point", "line", "polygon"
+ANY_GEOMETRY = frozenset((POINT, LINE, POLYGON))
+GEOMETRY_LABELS = {POINT: "point", LINE: "line", POLYGON: "polygon", "none": "table (no geometry)",
+                   "unknown": "mixed / unknown geometry"}
+
+# Templates whose geometry types cannot be read from the expression alone.
+TEMPLATE_GEOMETRY = {
+    "Number of vertices": {LINE, POLYGON},
+    "Width of the bounding box": {LINE, POLYGON},
+    "Height of the bounding box": {LINE, POLYGON},
+    "Not too many vertices": {LINE, POLYGON},
+    "Not too many vertices (check existing data)": {LINE, POLYGON},
+    "Points of this layer must be at least 1 m apart": {POINT},
+    "Points at least 1 m apart (check existing data)": {POINT},
+    "Must lie on another layer (snapped, within 1 cm)": {POINT, LINE},
+    "Must lie on another layer (check existing data)": {POINT, LINE},
+    "Count of features of another layer inside it": {POLYGON},
+    "Sum of a field of another layer inside it": {POLYGON},
+    "Length of lines of another layer inside it": {POLYGON},
+}
+
+
+def template_geometries(template):
+    """Geometry types a template makes sense for, or None when it only uses attributes."""
+    label, expr = template[0], template[2]
+    if label in TEMPLATE_GEOMETRY:
+        return frozenset(TEMPLATE_GEOMETRY[label])
+    if any(k in expr for k in ("$area", "area(", "$perimeter", "num_interior_rings", "overlay_contains")):
+        return frozenset((POLYGON,))
+    if any(k in expr for k in ("$length", "start_point", "end_point")):
+        return frozenset((LINE,))
+    if "z($geometry)" in expr:
+        return frozenset((POINT,))
+    if any(k in expr for k in ("$geometry", "$x", "$y", "overlay_")):
+        return ANY_GEOMETRY
+    return None
+
+
+def fits_geometry(template, geometry):
+    """True when `template` should be offered for a layer of `geometry`
+    ("point", "line", "polygon", "none" for tables, "unknown"/None to show everything)."""
+    allowed = template_geometries(template)
+    if allowed is None or geometry in (None, "unknown"):
+        return True
+    if geometry == "none":
+        return False
+    return geometry in allowed
+
+
+def grouped_templates(rule_type, geometry=None):
+    """[(group title, [template tuples])] in display order; ungrouped templates go last.
+
+    With `geometry`, only the templates that make sense for that geometry type are returned.
+    """
+    by_label = {t[0]: t for t in TEMPLATES if t[1] == rule_type and fits_geometry(t, geometry)}
     out, used = [], set()
     for gtype, title, labels in TEMPLATE_GROUPS:
         if gtype != rule_type:
@@ -430,8 +482,8 @@ def q_str(text):
     return "'%s'" % str(text).replace("'", "''")
 
 
-def templates_for(rule_type):
-    return [t for _title, items in grouped_templates(rule_type) for t in items]
+def templates_for(rule_type, geometry=None):
+    return [t for _title, items in grouped_templates(rule_type, geometry) for t in items]
 
 
 def fill_template(expression, field=None, layer=None):

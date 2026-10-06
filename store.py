@@ -20,7 +20,7 @@ SPATIALITE_INTERNAL = (
     "sqlite_", "idx_", "spatial_ref_sys", "geometry_columns", "spatialite_", "views_", "virts_",
     "vector_layers", "data_licenses", "sql_statements_log", "elementarygeometries",
     "geom_cols_ref_sys", "raster_coverages", "knn", "iso_metadata", "stored_", "topologies",
-    "networks", "se_", "wms_",
+    "networks", "se_", "wms_", "spatialindex", "rl2map_", "virtualxpath", "sqlite_stat",
 )
 
 
@@ -78,6 +78,21 @@ def detect_format(path):
     return None
 
 
+def geometry_kind(geom_type):
+    """'point', 'line', 'polygon', 'none' (table) or 'unknown' for an OGR geometry type."""
+    if geom_type == ogr.wkbNone:
+        return "none"
+    linear = ogr.GT_GetLinear(geom_type) if hasattr(ogr, "GT_GetLinear") else geom_type
+    flat = ogr.GT_Flatten(linear)
+    if flat in (ogr.wkbPoint, ogr.wkbMultiPoint):
+        return "point"
+    if flat in (ogr.wkbLineString, ogr.wkbMultiLineString):
+        return "line"
+    if flat in (ogr.wkbPolygon, ogr.wkbMultiPolygon, ogr.wkbPolyhedralSurface, ogr.wkbTIN):
+        return "polygon"
+    return "unknown"
+
+
 def hidden(fmt, name):
     low = name.lower()
     if low in HELPER_TABLES:
@@ -97,7 +112,9 @@ def open_ds(fmt, path, update=False):
     last = None
     for flag in flags:
         try:
-            ds = gdal.OpenEx(path, gdal.OF_VECTOR | flag, allowed_drivers=[fmt.driver])
+            # SpatiaLite hides tables without geometry unless asked to list them all
+            opts = ["LIST_ALL_TABLES=YES"] if fmt.key == "spatialite" else []
+            ds = gdal.OpenEx(path, gdal.OF_VECTOR | flag, allowed_drivers=[fmt.driver], open_options=opts)
         except RuntimeError as e:
             ds, last = None, e
         if ds is not None:
@@ -182,6 +199,7 @@ def list_layers(fmt, path):
         fds = [defn.GetFieldDefn(j) for j in range(defn.GetFieldCount())]
         out.append({
             "name": name, "has_geom": lyr.GetGeomType() != ogr.wkbNone,
+            "geometry": geometry_kind(lyr.GetGeomType()),
             "fields": [fd.GetName() for fd in fds],
             "types": {fd.GetName(): ogr.GetFieldTypeName(fd.GetType()) for fd in fds},
         })
